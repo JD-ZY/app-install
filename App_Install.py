@@ -1,3 +1,52 @@
+import os, sys, tempfile, subprocess, json, urllib.request
+
+__version__ = "1.0.0"   # ← bump this on every release
+
+GITHUB_LATEST_URL = (
+    "https://raw.githubusercontent.com/JD-ZY/app-install/main/latest.json"
+)
+
+def _version_tuple(v):
+    return tuple(int(x) for x in v.split(".") if x.isdigit())
+
+def self_update():
+    """Check GitHub for a newer EXE, download & relaunch if found."""
+    try:
+        with urllib.request.urlopen(GITHUB_LATEST_URL, timeout=5) as resp:
+            meta = json.load(resp)
+    except Exception as e:
+        print(f"Update check skipped: {e}")
+        return
+
+    new_ver = meta.get("version", "")
+    if _version_tuple(new_ver) <= _version_tuple(__version__):
+        return
+
+    exe_name = meta.get("exe")
+    if not exe_name:
+        return
+
+    raw_url = (
+        "https://raw.githubusercontent.com/JD-ZY/app-install/"
+        "main/" + exe_name
+    )
+    print(f"Downloading updated installer: {exe_name}")
+    tmp = os.path.join(tempfile.gettempdir(), exe_name)
+    try:
+        with urllib.request.urlopen(raw_url, timeout=30) as r, open(tmp, "wb") as f:
+            f.write(r.read())
+    except Exception as e:
+        print(f"Update download failed: {e}")
+        return
+
+    print(f"Launching new installer {tmp}")
+    subprocess.Popen([tmp] + sys.argv[1:])
+    sys.exit(0)
+
+# Only run the updater when frozen into an EXE:
+if getattr(sys, "frozen", False):
+    self_update()
+
 import winreg
 import platform
 import tkinter as tk
@@ -5,9 +54,7 @@ import base64
 from tkinter import PhotoImage
 from tkinter import messagebox, ttk
 import subprocess
-import os
 import re
-import sys
 import shutil
 import ctypes
 
