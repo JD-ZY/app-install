@@ -1,6 +1,6 @@
 import os, sys, tempfile, subprocess, json, urllib.request
 
-__version__ = "1.0.0"   # ← bump this on every release
+__version__ = "1.3.0"   # ← bump this on every release
 
 GITHUB_LATEST_URL = (
     "https://raw.githubusercontent.com/JD-ZY/app-install/main/latest.json"
