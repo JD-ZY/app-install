@@ -1,6 +1,6 @@
 import os, sys, tempfile, subprocess, json, urllib.request
 
-__version__ = "1.3.0"   # ← bump this on every release
+__version__ = "1.4.0"   # ← bump this on every release
 
 GITHUB_LATEST_URL = (
     "https://raw.githubusercontent.com/JD-ZY/app-install/main/latest.json"
@@ -428,6 +428,11 @@ logo_label.pack(anchor="ne", padx=10, pady=10)
 
 root.title('App Installer')
 check_vars = {}
+# Show current version
+version_label = tk.Label(root, text=f"Version {__version__}", 
+                          font=("Segoe UI", 8), fg="gray")
+version_label.pack(anchor="sw", padx=10, pady=(0, 5))
+
 
 # Checkbox for Dell bloatware removal
 dell_checkbox_var = tk.BooleanVar()
